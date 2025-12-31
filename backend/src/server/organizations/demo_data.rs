@@ -6,6 +6,7 @@
 
 use chrono::{DateTime, Utc};
 use cidr::{IpCidr, Ipv4Cidr};
+use semver::Version;
 use std::net::{IpAddr, Ipv4Addr};
 use uuid::Uuid;
 
@@ -1391,7 +1392,7 @@ fn generate_daemons(
                 mode: DaemonMode::Push,
                 name: "HQ Daemon".to_string(),
                 tags: vec![],
-                version: None,
+                version: Version::parse(env!("CARGO_PKG_VERSION")).map(|v| Some(v)).unwrap_or_default(),
                 user_id,
             },
         });
@@ -1418,7 +1419,7 @@ fn generate_daemons(
                 mode: DaemonMode::Push,
                 name: "Cloud Daemon".to_string(),
                 tags: vec![],
-                version: None,
+                version: Version::parse(env!("CARGO_PKG_VERSION")).map(|v| Some(v)).unwrap_or_default(),
                 user_id,
             },
         });
@@ -1444,7 +1445,7 @@ fn generate_daemons(
                 mode: DaemonMode::Push,
                 name: "Denver Daemon".to_string(),
                 tags: vec![],
-                version: None,
+                version: Version::parse(env!("CARGO_PKG_VERSION")).map(|v| Some(v)).unwrap_or_default(),
                 user_id,
             },
         });

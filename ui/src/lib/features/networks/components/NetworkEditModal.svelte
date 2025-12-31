@@ -146,19 +146,6 @@
 					</form.Field>
 				</div>
 
-				{#if !isEditing}
-					<form.Field name="seedData">
-						{#snippet children(field)}
-							<Checkbox
-								label="Track services Scanopy can't discover automatically?"
-								helpText="Creates subnets for remote hosts and internet services that aren't on your local network (Cloud services, APIs, SaaS tools, etc). Includes example data to show how it works."
-								id="seedData"
-								{field}
-							/>
-						{/snippet}
-					</form.Field>
-				{/if}
-
 				{#if isEditing && network}
 					<EntityMetadataSection entities={[network]} />
 				{/if}

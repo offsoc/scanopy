@@ -130,102 +130,106 @@
 		<ModalHeaderIcon Icon={Building2} color="Blue" />
 	</svelte:fragment>
 
-	{#if org}
-		{#if activeSection === 'main'}
-			<div class="space-y-6 p-6">
-				<!-- Organization Info -->
-				<InfoCard title="Organization Information">
-					<InfoRow label="Name">{org.name}</InfoRow>
-					{#if org.plan}
-						<InfoRow label="Plan">{org.plan.type}</InfoRow>
-					{/if}
-					<InfoRow label="Created">
-						{formatTimestamp(org.created_at)}
-					</InfoRow>
-					<InfoRow label="ID" mono={true}>{org.id}</InfoRow>
-				</InfoCard>
+	<div class="flex min-h-0 flex-1 flex-col">
+		<div class="flex-1 overflow-auto p-6">
+			{#if org}
+				{#if activeSection === 'main'}
+					<div class="space-y-6">
+						<!-- Organization Info -->
+						<InfoCard title="Organization Information">
+							<InfoRow label="Name">{org.name}</InfoRow>
+							{#if org.plan}
+								<InfoRow label="Plan">{org.plan.type}</InfoRow>
+							{/if}
+							<InfoRow label="Created">
+								{formatTimestamp(org.created_at)}
+							</InfoRow>
+							<InfoRow label="ID" mono={true}>{org.id}</InfoRow>
+						</InfoCard>
 
-				<!-- Actions -->
-				<InfoCard>
-					<div class="flex items-center justify-between">
-						<div>
-							<p class="text-primary text-sm font-medium">Organization Name</p>
-							<p class="text-secondary text-xs">Update your organization's display name</p>
-						</div>
-						<button
-							onclick={() => {
-								activeSection = 'edit';
-								form.setFieldValue('name', org.name);
-							}}
-							class="btn-primary"
-						>
-							Edit
-						</button>
-					</div>
-				</InfoCard>
-
-				{#if isOwner}
-					<!-- Reset Organization Data (available to all org owners) -->
-					<InfoCard>
-						<div class="flex items-center justify-between">
-							<div>
-								<p class="text-primary text-sm font-medium">Reset Organization Data</p>
-								<p class="text-secondary text-xs">
-									Delete everything except for any organization owner user account. This cannot be
-									undone.
-								</p>
-							</div>
-							<button onclick={handleReset} disabled={resetting} class="btn-danger">
-								{resetting ? 'Resetting...' : 'Reset'}
-							</button>
-						</div>
-					</InfoCard>
-
-					{#if isDemoOrg}
-						<!-- Populate Demo Data (only for Demo orgs) -->
+						<!-- Actions -->
 						<InfoCard>
 							<div class="flex items-center justify-between">
 								<div>
-									<p class="text-primary text-sm font-medium">Populate Demo Data</p>
-									<p class="text-secondary text-xs">
-										Fill the organization with sample data for demonstration purposes.
-									</p>
+									<p class="text-primary text-sm font-medium">Organization Name</p>
+									<p class="text-secondary text-xs">Update your organization's display name</p>
 								</div>
-								<button onclick={handlePopulateDemo} disabled={populating} class="btn-primary">
-									{populating ? 'Populating...' : 'Populate'}
+								<button
+									onclick={() => {
+										activeSection = 'edit';
+										form.setFieldValue('name', org.name);
+									}}
+									class="btn-primary"
+								>
+									Edit
 								</button>
 							</div>
 						</InfoCard>
-					{/if}
+
+						{#if isOwner}
+							<!-- Reset Organization Data (available to all org owners) -->
+							<InfoCard>
+								<div class="flex items-center justify-between">
+									<div>
+										<p class="text-primary text-sm font-medium">Reset Organization Data</p>
+										<p class="text-secondary text-xs">
+											Delete everything except for any organization owner user account. This cannot
+											be undone.
+										</p>
+									</div>
+									<button onclick={handleReset} disabled={resetting} class="btn-danger">
+										{resetting ? 'Resetting...' : 'Reset'}
+									</button>
+								</div>
+							</InfoCard>
+
+							{#if isDemoOrg}
+								<!-- Populate Demo Data (only for Demo orgs) -->
+								<InfoCard>
+									<div class="flex items-center justify-between">
+										<div>
+											<p class="text-primary text-sm font-medium">Populate Demo Data</p>
+											<p class="text-secondary text-xs">
+												Fill the organization with sample data for demonstration purposes.
+											</p>
+										</div>
+										<button onclick={handlePopulateDemo} disabled={populating} class="btn-primary">
+											{populating ? 'Populating...' : 'Populate'}
+										</button>
+									</div>
+								</InfoCard>
+							{/if}
+						{/if}
+					</div>
+				{:else if activeSection === 'edit'}
+					<div class="space-y-6">
+						<p class="text-secondary text-sm">Update your organization's display name</p>
+						<form.Field
+							name="name"
+							validators={{
+								onBlur: ({ value }: { value: string }) => required(value) || max(100)(value)
+							}}
+						>
+							{#snippet children(field: AnyFieldApi)}
+								<TextInput
+									label="Organization Name"
+									id="name"
+									placeholder="Enter organization name"
+									required={true}
+									{field}
+								/>
+							{/snippet}
+						</form.Field>
+					</div>
 				{/if}
-			</div>
-		{:else if activeSection === 'edit'}
-			<div class="space-y-6">
-				<p class="text-secondary text-sm">Update your organization's display name</p>
-				<form.Field
-					name="name"
-					validators={{
-						onBlur: ({ value }: { value: string }) => required(value) || max(100)(value)
-					}}
-				>
-					{#snippet children(field: AnyFieldApi)}
-						<TextInput
-							label="Organization Name"
-							id="name"
-							placeholder="Enter organization name"
-							required={true}
-							{field}
-						/>
-					{/snippet}
-				</form.Field>
-			</div>
-		{/if}
-	{:else}
-		<div class="text-secondary py-8 text-center">
-			<p>Unable to load organization information</p>
-			<p class="text-tertiary mt-2 text-sm">Please try again later</p>
+			{:else}
+				<div class="text-secondary py-8 text-center">
+					<p>Unable to load organization information</p>
+					<p class="text-tertiary mt-2 text-sm">Please try again later</p>
+				</div>
+			{/if}
 		</div>
-	{/if}
+	</div>
 
 	<svelte:fragment slot="footer">
 		<div class="flex items-center justify-end gap-3">
